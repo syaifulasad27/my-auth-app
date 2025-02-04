@@ -1,0 +1,76 @@
+<% layout('layouts/app') %>
+    <section class="section">
+        <div class="section-header">
+            <h1>
+                <%= title %>
+            </h1>
+        </div>
+        <div>
+            <%- include('../layouts/partials/alert') %>
+        </div>
+        <div class="section-body">
+            <div class="row mb-3">
+                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="account-settings">
+                                <div class="user-profile mb-3">
+                                    <div class="text-center">
+                                        <% if(user.images.length){ %>
+                                            <img src="/assets/img/avatar/<%= user.images[0].filename %>"
+                                                alt="<%= user.images[0].filename %>" class="circle" width="150px" />
+                                            <% } else { %>
+                                                <img src="/assets/img/avatar/avatar-1.png" alt="avatar" class="circle"
+                                                    width="150px" />
+                                                <% } %>
+                                    </div>
+                                </div>
+                                <div class="setting-links">
+                                    <a href="/users/profile/update" class="btn btn-primary btn-sm m-1">
+                                        <i class="fa fa-cog"></i>
+                                        Edit Profile
+                                    </a>
+                                    <a href="/users/profile/change-password" class="btn btn-primary btn-sm m-1">
+                                        <i class="fa fa-lock"></i>
+                                        Ubah Password
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title">Profile</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gutters">
+                                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-12">
+                                    <div class="form-group">
+                                        <label for="eMail">Nama</label>
+                                        <input type="email" class="form-control" id="eMail" placeholder="" readonly
+                                            name="name" value="<%= user.fullname || '' %>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addRess">Username</label>
+                                        <input type="text" class="form-control" id="addRess" placeholder=""
+                                            value="<%= user.username %>" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone">Email</label>
+                                        <input type="text" class="form-control" id="phone" placeholder="" readonly
+                                            name="email" value="<%= user.email %>">
+                                    </div>
+                                </div>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="text-right">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>

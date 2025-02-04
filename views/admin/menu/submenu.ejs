@@ -1,0 +1,169 @@
+<% layout('layouts/app') %>
+    <section class="section">
+        <div class="section-header">
+            <h1>
+                <%= title %>
+            </h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="/admin/manage-menus">Menu</a></div>
+                <div class="breadcrumb-item">Sub Menu</div>
+            </div>
+        </div>
+        <div>
+            <%- include('../../layouts/partials/alert') %>
+        </div>
+        <div class="row pl-3">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-dark py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-white">Data SubMenu</h6>
+                    <a href="" class="btn btn-primary btn-circle btn-sm text-white" data-toggle="modal"
+                        data-target="#newSubMenuModal"><i class="fa fa-plus"></i></a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered border-dark table-striped" id="dataTable" width="100%"
+                            cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Route</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% subMenus.forEach((submenu, index)=> { %>
+                                    <tr>
+                                        <th scope="row">
+                                            <%= index + 1 %>
+                                        </th>
+                                        <td>
+                                            <%= submenu.name %>
+                                        </td>
+                                        <td>
+                                            <%= submenu.route %>
+                                        </td>
+                                        <td>
+                                            <div class="row">
+                                                <div class="mr-2">
+                                                    <% if(submenu.status) { %>
+                                                        <label class="btn btn-success btn-sm">Active</label>
+                                                        <% } else { %>
+                                                            <label class="btn btn-danger btn-sm">Inactive</label>
+                                                            <% } %>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-success btn-sm" data-toggle="modal"
+                                                data-target="#editSubMenu<%= submenu._id %>">Edit</button>
+                                            <form
+                                                action="/admin/manage-menus/submenu/<%= menu_id %>/<%= submenu._id %>?_method=DELETE"
+                                                method="POST" class="d-inline">
+                                                <button class="btn btn-danger btn-sm" type="submit"
+                                                    onclick="return confirm('Are you sure you want to delete this submenu?')">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Add Submenu -->
+    <div class="modal fade" id="newSubMenuModal" tabindex="-1" role="dialog" aria-labelledby="newSubMenuModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newSubMenuModalLabel">Add New SubMenu</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="/admin/manage-menus/submenu/<%= menu_id %>" method="POST">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="route">Route</label>
+                            <input type="text" class="form-control" id="route" name="route" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <select class="form-control" id="status" name="status" required>
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="orderBy">Urutan</label>
+                            <input type="number" class="form-control" id="orderBy" name="orderBy" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add SubMenu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit Submenu -->
+    <% subMenus.forEach(submenu=> { %>
+        <div class="modal fade" id="editSubMenu<%= submenu._id %>" tabindex="-1" role="dialog"
+            aria-labelledby="editSubMenuLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editSubMenuLabel">Edit SubMenu</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="/admin/manage-menus/submenu/<%= menu_id %>/<%= submenu._id %>?_method=PUT"
+                        method="POST">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="edit-name">Name</label>
+                                <input type="text" class="form-control" id="edit-name" name="name"
+                                    value="<%= submenu.name %>" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-route">Route</label>
+                                <input type="text" class="form-control" id="edit-route" name="route"
+                                    value="<%= submenu.route %>" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-status">Status</label>
+                                <select class="form-control" id="edit-status" name="status" required>
+                                    <option value="true" <%=submenu.status ? 'selected' : '' %>>Active
+                                    </option>
+                                    <option value="false" <%=!submenu.status ? 'selected' : '' %>
+                                        >Inactive</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="orderBy">Urutan</label>
+                                <input type="number" class="form-control" id="orderBy" name="orderBy"
+                                    value="<%= submenu.orderBy %>" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Update SubMenu</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <% }); %>

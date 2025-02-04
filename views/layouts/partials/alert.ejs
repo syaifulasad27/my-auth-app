@@ -1,0 +1,20 @@
+<% if (success_msg && success_msg.length) { %>
+    <div class="alert alert-success">
+        <Strong>Success!!! </Strong>
+        <%- success_msg %>
+    </div>
+    <% } %>
+
+        <% if (error_msg && error_msg.length) { %>
+            <div class="alert alert-danger">
+                <Strong>Error!!! </Strong>
+                <%- error_msg %>
+            </div>
+            <% } %>
+
+                <% if (info_msg && info_msg.length) { %>
+                    <div class="alert alert-info">
+                        <Strong>Info!!! </Strong>
+                        <%- info_msg %>
+                    </div>
+                    <% } %>

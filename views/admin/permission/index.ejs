@@ -1,0 +1,270 @@
+<% layout('layouts/app') %>
+    <section class="section">
+        <div class="section-header">
+            <h1>
+                <%= title %>
+            </h1>
+        </div>
+        <div>
+            <%- include('../../layouts/partials/alert') %>
+        </div>
+        <div class="row pl-3">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-dark py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-white">Data Permission</h6>
+                    <button class="btn btn-primary btn-circle btn-sm text-white" data-toggle="modal"
+                        data-target="#createPermissionModal">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered border-dark table-striped" id="dataTable" width="100%"
+                            cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Nama</th>
+                                    <th scope="col">SubMenu</th>
+                                    <th scope="col">Action</th>
+                                    <th scope="col">Subject</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% permissions.forEach((permission, index)=> { %>
+                                    <tr>
+                                        <th scope="row">
+                                            <%= index + 1 %>
+                                        </th>
+                                        <td>
+                                            <%= permission.name %>
+                                        </td>
+                                        <td>
+                                            <%= permission.subMenu ? permission.subMenu.name : 'No SubMenu' %>
+                                        </td>
+                                        <td>
+                                            <%= permission.action %>
+                                        </td>
+                                        <td>
+                                            <%= permission.subject%>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-success btn-sm" data-toggle="modal"
+                                                data-target="#editPermissionModal<%= permission._id %>">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <form
+                                                action="/admin/manage-permissions/<%= permission._id %>?_method=DELETE"
+                                                method="POST" class="d-inline">
+                                                <button class="btn btn-danger btn-sm" type="submit"
+                                                    onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Data ini?')">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Create permission -->
+    <div class="modal fade" id="createPermissionModal" tabindex="-1" permission="dialog"
+        aria-labelledby="createPermissionModalLabel" aria-hidden="true">
+        <div class="modal-dialog" permission="document">
+            <div class="modal-content">
+                <form action="/admin/manage-permissions" method="POST">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createPermissionModalLabel">Tambah permission Baru</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Pilih Menu</label>
+                            <select class="form-control" id="menu" name="menu" required>
+                                <option value="">Pilih menu...</option>
+                                <% menus.forEach(menu=> { %>
+                                    <option value="<%= menu._id %>">
+                                        <%= menu.name %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Pilih Sub Menu</label>
+                            <select class="form-control" id="subMenu" name="subMenu" required>
+                                <option value="">Pilih submenu...</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nama Permission</label>
+                            <input type="text" class="form-control" name="name" placeholder="Nama Permission...."
+                                required>
+                        </div>
+
+                        <!-- Input Action & Subject -->
+                        <div class="form-group">
+                            <label>Action & Subject</label>
+                            <div id="permission-container">
+                                <div class="input-group mb-2">
+                                    <input type="text" class="form-control" name="action[]"
+                                        placeholder="Action (e.g., 'read', 'write')" required>
+                                    <input type="text" class="form-control" name="subject[]"
+                                        placeholder="Subject (e.g., 'User', 'Product')" required>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-danger remove-permission-btn">X</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-info mt-2" id="add-permission-btn">Tambah Action &
+                                Subject</button>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit permission -->
+    <% permissions.forEach((permission)=> { %>
+        <div class="modal fade" id="editPermissionModal<%= permission.id %>" tabindex="-1" role="dialog"
+            aria-labelledby="editPermissionModalLabel<%= permission.id %>" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form action="/admin/manage-permissions/<%= permission.id %>?_method=PUT" method="POST">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editPermissionModalLabel<%= permission.id %>">Edit role</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Pilih Menu</label>
+                                <select class="form-control menu-dropdown" name="menu" required>
+                                    <option value="">Pilih menu...</option>
+                                    <% menus.forEach(menu=> { %>
+                                        <option value="<%= menu._id %>" <%=permission.menu &&
+                                            permission.menu._id.equals(menu._id) ? 'selected' : '' %>>
+                                            <%= menu.name %>
+                                        </option>
+                                        <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Pilih Sub Menu</label>
+                                <select class="form-control subMenu-dropdown" name="subMenu" required>
+                                    <option value="<%= permission.subMenu ? permission.subMenu._id : '' %>">
+                                        <%= permission.subMenu ? permission.subMenu.name : 'Pilih submenu...' %>
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Nama Permission</label>
+                                <input type="text" class="form-control" name="name" placeholder="Nama Permission...."
+                                    required value="<%= permission.name %>">
+                            </div>
+                            <div class="form-group">
+                                <label>Action & Subject</label>
+                                <div id="permission-container">
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control" name="action"
+                                            placeholder="Action (e.g., 'read', 'write')"
+                                            value="<%= permission.action %>" required>
+                                        <input type="text" class="form-control" name="subject"
+                                            placeholder="Subject (e.g., 'User', 'Product')"
+                                            value="<%= permission.subject %>" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-success">Perbarui</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <% }) %>
+
+            <script src="/assets/js/jquery-3.6.0.min.js"></script>
+            <script>
+                $(document).ready(function () {
+                    // Load submenu berdasarkan menu yang dipilih
+                    $('#menu').change(function () {
+                        var menuId = $(this).val();
+                        if (menuId != '') {
+                            $.ajax({
+                                url: '/admin/manage-permissions/submenu',
+                                method: 'POST',
+                                data: { menuId: menuId },
+                                dataType: 'json',
+                                success: function (data) {
+                                    $('#subMenu').html('<option value="">Pilih submenu...</option>');
+                                    $.each(data, function (key, value) {
+                                        $('#subMenu').append('<option value="' + value._id + '">' + value.name + '</option>');
+                                    });
+                                }
+                            });
+                        } else {
+                            $('#subMenu').html('<option value="">Pilih submenu...</option>');
+                        }
+                    });
+
+                    // Tambah input action & subject secara dinamis
+                    $('#add-permission-btn').click(function () {
+                        $('#permission-container').append(`
+            <div class="input-group mb-2">
+                <input type="text" class="form-control" name="action[]" placeholder="Action (e.g., 'read', 'write')" required>
+                <input type="text" class="form-control" name="subject[]" placeholder="Subject (e.g., 'User', 'Product')" required>
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-danger remove-permission-btn">X</button>
+                </div>
+            </div>
+        `);
+                    });
+
+                    // Hapus input action & subject
+                    $(document).on('click', '.remove-permission-btn', function () {
+                        $(this).closest('.input-group').remove();
+                    });
+                });
+
+                $(".menu-dropdown").change(function () {
+                    var menuId = $(this).val();
+                    var subMenuDropdown = $(this).closest("form").find(".subMenu-dropdown");
+
+                    if (menuId) {
+                        $.ajax({
+                            url: '/admin/manage-permissions/submenu',
+                            method: 'POST',
+                            data: { menuId: menuId },
+                            dataType: 'json',
+                            success: function (data) {
+                                subMenuDropdown.html('<option value="">Pilih submenu...</option>');
+                                $.each(data, function (key, value) {
+                                    subMenuDropdown.append('<option value="' + value._id + '">' + value.name + '</option>');
+                                });
+                            }
+                        });
+                    } else {
+                        subMenuDropdown.html('<option value="">Pilih submenu...</option>');
+                    }
+                });
+            </script>

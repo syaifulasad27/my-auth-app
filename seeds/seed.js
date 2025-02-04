@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt');
 async function seedDatabase() {
     try {
         // Connect to MongoDB
-        await mongoose.connect('mongodb://127.0.0.1/my_auth_project')
+        await mongoose.connect('mongodb://127.0.0.1/absensi_app')
             .then((result) => {
                 console.log('connected to mongodb')
             }).catch((err) => {
@@ -24,16 +24,6 @@ async function seedDatabase() {
         await SubMenu.deleteMany();
 
         console.log('Existing data cleared');
-
-        // Seed permissions
-        const permissions = [
-            { name: 'manage-users', action: 'manage', subject: 'User' },
-            { name: 'view-finance', action: 'view', subject: 'Finance' },
-            { name: 'edit-profile', action: 'update', subject: 'Profile' },
-            { name: 'view-profile', action: 'view', subject: 'Profile' },
-        ];
-        const permissionDocs = await Permission.insertMany(permissions);
-        console.log('Permissions seeded');
 
         // Seed menus and sub-menus
         const subMenuDocs = await SubMenu.insertMany([
@@ -76,6 +66,16 @@ async function seedDatabase() {
             },
         ]);
         console.log('Menus and sub-menus seeded');
+
+        // Seed permissions
+        const permissions = [
+            { name: 'manage-users', action: 'manage', subject: 'User', subMenu: subMenuDocs[1]._id, },
+            { name: 'view-finance', action: 'view', subject: 'Finance', subMenu: subMenuDocs[5]._id, },
+            { name: 'edit-profile', action: 'update', subject: 'Profile', subMenu: subMenuDocs[0]._id, },
+            { name: 'view-profile', action: 'view', subject: 'Profile', subMenu: subMenuDocs[0]._id, },
+        ];
+        const permissionDocs = await Permission.insertMany(permissions);
+        console.log('Permissions seeded');
 
         // Seed roles
         const roles = [

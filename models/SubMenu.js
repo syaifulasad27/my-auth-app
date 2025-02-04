@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 const subMenuSchema = new Schema({
     name: { type: String, required: true }, // Nama submenu
     route: { type: String, required: true }, // Path URL untuk submenu
-    menu: { type: Schema.Types.ObjectId, ref: 'Menu', required: true }, // Relasi ke menu
     orderBy: { type: Number }, // Urutan submenu dalam menu
     status: { type: Boolean, default: true }, // Status aktif/tidak
 }, { timestamps: true });
